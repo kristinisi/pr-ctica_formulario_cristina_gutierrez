@@ -17,6 +17,7 @@ const historyActions = {
   dishesMenuList: (event) => ManagerApp.handleDishesMenuList(event.state.menu),
   restaurant: (event) => ManagerApp.handleRestaurant(event.state.restaurant),
   dish: (event) => ManagerApp.handleDish(event.state.name),
+  newCategory: () => ManagerApp.handleNewCategoryForm(),
 };
 
 history.replaceState({ action: "init" }, null);

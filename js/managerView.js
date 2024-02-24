@@ -1,3 +1,5 @@
+import { newCategoryValidation } from "../js/validation.js";
+
 const EXCECUTE_HANDLER = Symbol("excecuteHandler");
 
 class ManagerView {
@@ -24,46 +26,27 @@ class ManagerView {
     event.preventDefault();
   }
 
-  //Creamos el bind para los enlaces de inicio
+  //Creación de shows
 
-  bindInit(handler) {
-    document.getElementById("init").addEventListener("click", (event) => {
-      this[EXCECUTE_HANDLER](
-        handler,
-        [],
-        "body",
-        { action: "init" },
-        "#",
-        event
-      );
-    });
-  }
-
-  showCategories() {
+  showCategories(categories) {
     this.categories.replaceChildren();
     const container = document.createElement("section");
     container.id = "section-div";
-    this.categories.insertAdjacentHTML(
-      "beforeend",
-      `<div>
-        <a class='categories__enlace' href="#category-list" data-category="Moluscos">
-        <img src="./img/_calamar.png" alt="Categoría Moluscos y Cefalopodos">
-          <h4>Moluscos y Cefalópodos</h4>
-        </a>
-      </div>
-      <div>
-          <a class='categories__enlace' href="#category-list" data-category="Crustaceos">
-              <img src="./img/_langosta.png" alt="Categoría Crustaceos">
-              <h4>Crustáceos</h4>
-          </a>
-      </div>
-      <div>
-          <a class='categories__enlace' href="#category-list" data-category="Pescados">
-              <img src="./img/_pez.png" alt="Categoría Pescados">
-              <h4>Pescados</h4>
-          </a>
-      </div>`
-    );
+    container.classList.add("row");
+    for (const category of categories) {
+      this.categories.insertAdjacentHTML(
+        "beforeend",
+        `<div>
+            <a class='categories__enlace' href="#category-list" data-category=${category.category.name}>
+            <img src=${category.category.image} alt=${category.category.name}>
+              <h4>${category.category.name}</h4>
+              
+            </a>
+          </div>`
+      );
+      console.log(category.category.image);
+    }
+
     this.categories.appendChild(container);
   }
   showRandomDishes(dishes) {
@@ -93,22 +76,15 @@ class ManagerView {
   }
 
   showCategoriesInMenu(categories) {
-    const li = document.createElement("li");
-    li.classList.add("nav-item", "dropdown");
-    li.insertAdjacentHTML(
-      "beforeend",
-      `<a class="nav-link dropdown-toggle" href="#" id="navCats" role="button"     data-bs-toggle="dropdown" aria-expanded="false">Categorías</a>`
-    );
-    const container = document.createElement("ul");
-    container.classList.add("dropdown-menu");
+    const navCats = document.getElementById("navCats");
+    const container = navCats.nextElementSibling;
+    container.replaceChildren();
     for (const category of categories) {
       container.insertAdjacentHTML(
         "beforeend",
         `<li><a data-category="${category.category.name}" class="dropdown-item" href="#productlist">${category.category.name}</a></li>`
       );
     }
-    li.append(container);
-    this.menu.append(li);
   }
 
   showAllergensInMenu(allergens) {
@@ -215,6 +191,264 @@ class ManagerView {
     this.main.append(container);
   }
 
+  showDish(dish) {
+    const nav = document.querySelector(".breadcrumb");
+    nav.id = "migas_plato";
+    const ultimoLi = nav.querySelector(".active");
+    ultimoLi.classList.remove("active");
+    const li = document.createElement("li");
+    li.classList.add("breadcrumb-item", "active");
+    li.textContent = "Plato";
+    nav.insertAdjacentElement("beforeend", li);
+
+    this.categories.replaceChildren();
+    this.main.replaceChildren();
+
+    const container = document.createElement("div");
+    container.classList.add("container");
+
+    if (dish) {
+      container.id = "single-dish";
+      const ingredientsList = dish.ingredients.join(", ");
+      container.insertAdjacentHTML(
+        "beforeend",
+        `
+        <div class="card mb-3" style="max-width: 540px;">
+          <div class="row g-0">
+            <div class="col-md-4">
+              <img src="${dish.image}" class="img-fluid rounded-start">
+            </div>  
+            <div class="col-md-8">
+              <div class="card-body">
+                <h5 class="card-title">${dish.name}</h5>
+                <p class="card-text">${dish.description}</p>
+                <p class="card-text"><small class="text-body-secondary">${ingredientsList}</small></p>
+              </div>
+            </div>
+          </div>
+        </div>
+        `
+      );
+    }
+    const bDish = document.createElement("button");
+    bDish.id = "btn";
+    bDish.dataset.name = dish.name;
+    bDish.innerHTML = "Abrir plato en una nueva ventana";
+
+    this.main.append(nav);
+    this.main.append(container);
+    this.main.append(bDish);
+  }
+
+  showRestaurant(restaurant, name) {
+    this.categories.replaceChildren();
+    this.main.replaceChildren();
+
+    const nav = document.createElement("nav");
+    nav.id = "migas_restaurante";
+    nav.ariaLabel = "breadcrumbs";
+    nav.insertAdjacentHTML(
+      "beforeend",
+      `
+      <ol class="breadcrumb">
+       <li class="breadcrumb-item">Inicio</li>
+       <li class="breadcrumb-item">Restaurantes</li>
+       <li class="breadcrumb-item active">${name}</li>
+      </ol>
+      `
+    );
+
+    const container = document.createElement("div");
+    container.classList.add("container");
+    if (restaurant) {
+      container.id = "restaurant";
+      container.insertAdjacentHTML(
+        "beforeend",
+        `
+        <div class="card text-bg-dark">
+          <img src="${restaurant.restaurant.image}" class="card-img">
+          <div class="card-img-overlay">
+            <h5 class="card-title">${restaurant.restaurant.name}</h5>
+            <p class="card-text">${restaurant.restaurant.description}</p>
+          </div>
+        </div>
+        `
+      );
+    }
+    this.main.append(nav);
+    this.main.append(container);
+  }
+
+  showDishInNewWindow(dish, newWindow) {
+    const main = newWindow.document.querySelector("main");
+    console.log(main);
+    main.replaceChildren();
+    let container;
+    if (dish) {
+      console.log(newWindow);
+      newWindow.document.title = `${dish.name}`;
+      container = newWindow.document.createElement("div");
+      container.classList.add("container");
+      container.id = "single-dish";
+      const ingredientsList = dish.ingredients.join(", ");
+      container.insertAdjacentHTML(
+        "beforeend",
+        `
+      <div class="card mb-3" style="max-width: 540px;">
+        <div class="row g-0">
+          <div class="col-md-4">
+            <img src="${dish.image}" class="img-fluid rounded-start">
+          </div>  
+          <div class="col-md-8">
+            <div class="card-body">
+              <h5 class="card-title">${dish.name}</h5>
+              <p class="card-text">${dish.description}</p>
+              <p class="card-text"><small class="text-body-secondary">${ingredientsList}</small></p>
+            </div>
+          </div>
+        </div>
+      </div>
+      `
+      );
+    }
+    main.append(container);
+  }
+
+  showCloseInMenu() {
+    const li = document.createElement("li");
+    li.insertAdjacentHTML(
+      "beforeend",
+      `<a class=" href="#" id="navClose" role="button">Cerrar ventanas</a>`
+    );
+    this.menu.append(li);
+  }
+
+  showAdminMenu() {
+    const menuOption = document.createElement("li");
+    menuOption.classList.add("nav-item");
+    menuOption.classList.add("dropdown");
+    menuOption.insertAdjacentHTML(
+      "afterbegin",
+      '<a class="nav-link dropdown-toggle" href="#" id="navServices" role="button" data-bs-toggle="dropdown" aria-expanded="false"> Adminitración</a>'
+    );
+    const suboptions = document.createElement("ul");
+    suboptions.classList.add("dropdown-menu");
+    suboptions.insertAdjacentHTML(
+      "beforeend",
+      '<li><a id="lnewCategory" class="dropdown-item" href="#new-category">Crear categoría</a></li>'
+    );
+    // suboptions.insertAdjacentHTML(
+    //   "beforeend",
+    //   '<li><a id="ldelCategory" class="dropdown-item" href="#del-category">Eliminar categoría</a></li>'
+    // );
+    // suboptions.insertAdjacentHTML(
+    //   "beforeend",
+    //   '<li><a id="lnewProduct" class="dropdown-item" href="#new-product">Crear producto</a></li>'
+    // );
+    // suboptions.insertAdjacentHTML(
+    //   "beforeend",
+    //   '<li><a id="ldelProduct" class="dropdown-item" href="#del-product">Eliminar producto</a></li>'
+    // );
+    menuOption.append(suboptions);
+    this.menu.append(menuOption);
+  }
+
+  showNewCategoryForm() {
+    this.categories.replaceChildren();
+    this.main.replaceChildren();
+    // if (this.categories.children.length > 1)
+    //   this.categories.children[1].remove();
+    const container = document.createElement("div");
+    container.classList.add("container");
+    container.classList.add("my-3");
+    container.id = "new-category";
+    container.insertAdjacentHTML(
+      "afterbegin",
+      '<h1 class="display-5">Nueva categoría</h1>'
+    );
+    container.insertAdjacentHTML(
+      "beforeend",
+      `<form id="formulario-cat" name="fNewCategory" role="form" class="row g-3" novalidate> 
+        <div class="col-md-6 mb-3"> 
+          <label class="form-label" for="ncName">Nombre *</label> 
+          <div class="input-group"> 
+            <span class="input-group-text"><i class="bi bi-type"></i></span> 
+            <input type="text" class="form-control" id="ncName" name="ncName" placeholder="Título de categoría" value="" required> 
+            <div class="invalid-feedback">El nombre es obligatorio.</div> 
+            <div class="valid-feedback">Correcto.</div> 
+          </div> 
+        </div> 
+        <div class="col-md-6 mb-3"> 
+          <label class="form-label" for="ncImg">Nombre de la imagen *</label> 
+          <div class="input-group"> 
+            <span class="input-group-text"><i class="bi bi-file-image"></i></span> 
+            <input type="file" class="form-control" id="ncImg" name="ncImg" placeholder="Nombre con extensión de la imagen" value="" required> 
+            <div class="invalid-feedback">La imagen no es válida.</div> 
+            <div class="valid-feedback">Correcto.</div> 
+          </div> 
+        </div> 
+        <div class="col-md-12 mb-3"> 
+          <label class="form-label" for="ncDescription">Descripción</label> 
+          <div class="input-group"> 
+            <span class="input-group-text"><i class="bi bi-body-text"></i></span> 
+            <input type="text" class="form-control" id="ncDescription" name="ncDescription" value=""> 
+            <div class="invalid-feedback"></div> 
+            <div class="valid-feedback">Correcto.</div> 
+          </div> 
+        </div> 
+        <div class="mb-12"> 
+          <button class="btn btn-primary" type="submit">Enviar</button> 
+          <button class="btn btn-primary" type="reset">Cancelar</button> 
+        </div> 
+      </form>`
+    );
+    this.main.append(container);
+  }
+
+  showNewCategoryModal(done, cat, error) {
+    const messageModalContainer = document.getElementById("messageModal");
+    const messageModal = new bootstrap.Modal("#messageModal");
+    const title = document.getElementById("messageModalTitle");
+    title.innerHTML = "Nueva Categoría";
+    const body = messageModalContainer.querySelector(".modal-body");
+    body.replaceChildren();
+    if (done) {
+      body.insertAdjacentHTML(
+        "afterbegin",
+        `<div class="p-3">La categoría <strong>${cat.name}</strong> ha sido creada correctamente.</div>`
+      );
+    } else {
+      body.insertAdjacentHTML(
+        "afterbegin",
+        `<div class="error text-danger p-3"><i class="bi bi-exclamation-triangle"></i> La categoría <strong>${cat.name}</strong> ya está creada.</div>`
+      );
+    }
+    messageModal.show();
+    const listener = (event) => {
+      if (done) {
+        document.fNewCategory.reset();
+      }
+      document.fNewCategory.ncName.focus();
+    };
+    messageModalContainer.addEventListener("hidden.bs.modal", listener, {
+      once: true,
+    });
+  }
+
+  //Creacion de binds
+  bindInit(handler) {
+    document.getElementById("init").addEventListener("click", (event) => {
+      this[EXCECUTE_HANDLER](
+        handler,
+        [],
+        "body",
+        { action: "init" },
+        "#",
+        event
+      );
+    });
+  }
+
   //Dos métodos que enlazan el manejador con los elementos de la pagina categoria
   bindDishesCategoryList(handler) {
     const categoryList = document.getElementById("categories");
@@ -236,7 +470,7 @@ class ManagerView {
 
   bindDishesCategoryListInMenu(handler) {
     const navCats = document.getElementById("navCats");
-    const links = navCats.nextSibling.querySelectorAll("a");
+    const links = navCats.nextElementSibling.querySelectorAll("a");
     for (const link of links) {
       link.addEventListener("click", (event) => {
         const { category } = event.currentTarget.dataset;
@@ -288,55 +522,6 @@ class ManagerView {
     }
   }
 
-  showDish(dish) {
-    const nav = document.querySelector(".breadcrumb");
-    nav.id = "migas_plato";
-    const ultimoLi = nav.querySelector(".active");
-    ultimoLi.classList.remove("active");
-    const li = document.createElement("li");
-    li.classList.add("breadcrumb-item", "active");
-    li.textContent = "Plato";
-    nav.insertAdjacentElement("beforeend", li);
-
-    this.categories.replaceChildren();
-    this.main.replaceChildren();
-
-    const container = document.createElement("div");
-    container.classList.add("container");
-
-    if (dish) {
-      container.id = "single-dish";
-      const ingredientsList = dish.ingredients.join(", ");
-      container.insertAdjacentHTML(
-        "beforeend",
-        `
-        <div class="card mb-3" style="max-width: 540px;">
-          <div class="row g-0">
-            <div class="col-md-4">
-              <img src="${dish.image}" class="img-fluid rounded-start">
-            </div>  
-            <div class="col-md-8">
-              <div class="card-body">
-                <h5 class="card-title">${dish.name}</h5>
-                <p class="card-text">${dish.description}</p>
-                <p class="card-text"><small class="text-body-secondary">${ingredientsList}</small></p>
-              </div>
-            </div>
-          </div>
-        </div>
-        `
-      );
-    }
-    const bDish = document.createElement("button");
-    bDish.id = "btn";
-    bDish.dataset.name = dish.name;
-    bDish.innerHTML = "Abrir plato en una nueva ventana";
-
-    this.main.append(nav);
-    this.main.append(container);
-    this.main.append(bDish);
-  }
-
   bindDishClick(handler) {
     const dishlist = document.getElementById("dishes-list");
     const links = dishlist.querySelectorAll("a.imagen");
@@ -354,45 +539,6 @@ class ManagerView {
         );
       });
     }
-  }
-
-  showRestaurant(restaurant, name) {
-    this.categories.replaceChildren();
-    this.main.replaceChildren();
-
-    const nav = document.createElement("nav");
-    nav.id = "migas_restaurante";
-    nav.ariaLabel = "breadcrumbs";
-    nav.insertAdjacentHTML(
-      "beforeend",
-      `
-      <ol class="breadcrumb">
-       <li class="breadcrumb-item">Inicio</li>
-       <li class="breadcrumb-item">Restaurantes</li>
-       <li class="breadcrumb-item active">${name}</li>
-      </ol>
-      `
-    );
-
-    const container = document.createElement("div");
-    container.classList.add("container");
-    if (restaurant) {
-      container.id = "restaurant";
-      container.insertAdjacentHTML(
-        "beforeend",
-        `
-        <div class="card text-bg-dark">
-          <img src="${restaurant.restaurant.image}" class="card-img">
-          <div class="card-img-overlay">
-            <h5 class="card-title">${restaurant.restaurant.name}</h5>
-            <p class="card-text">${restaurant.restaurant.description}</p>
-          </div>
-        </div>
-        `
-      );
-    }
-    this.main.append(nav);
-    this.main.append(container);
   }
 
   bindRestaurantListInMenu(handler) {
@@ -413,41 +559,6 @@ class ManagerView {
         );
       });
     }
-  }
-
-  showDishInNewWindow(dish, newWindow) {
-    const main = newWindow.document.querySelector("main");
-    console.log(main);
-    main.replaceChildren();
-    let container;
-    if (dish) {
-      console.log(newWindow);
-      newWindow.document.title = `${dish.name}`;
-      container = newWindow.document.createElement("div");
-      container.classList.add("container");
-      container.id = "single-dish";
-      const ingredientsList = dish.ingredients.join(", ");
-      container.insertAdjacentHTML(
-        "beforeend",
-        `
-      <div class="card mb-3" style="max-width: 540px;">
-        <div class="row g-0">
-          <div class="col-md-4">
-            <img src="${dish.image}" class="img-fluid rounded-start">
-          </div>  
-          <div class="col-md-8">
-            <div class="card-body">
-              <h5 class="card-title">${dish.name}</h5>
-              <p class="card-text">${dish.description}</p>
-              <p class="card-text"><small class="text-body-secondary">${ingredientsList}</small></p>
-            </div>
-          </div>
-        </div>
-      </div>
-      `
-      );
-    }
-    main.append(container);
   }
 
   bindShowDishInNewWindow(handler) {
@@ -478,20 +589,29 @@ class ManagerView {
     });
   }
 
-  showCloseInMenu() {
-    const li = document.createElement("li");
-    li.insertAdjacentHTML(
-      "beforeend",
-      `<a class=" href="#" id="navClose" role="button">Cerrar ventanas</a>`
-    );
-    this.menu.append(li);
-  }
-
   bindCloseInMenu(handler) {
     const navClose = document.getElementById("navClose");
     navClose.addEventListener("click", (event) => {
       handler(this.dishWindow);
     });
+  }
+
+  bindAdminMenu(hNewCategory) {
+    const newCategoryLink = document.getElementById("lnewCategory");
+    newCategoryLink.addEventListener("click", (event) => {
+      this[EXCECUTE_HANDLER](
+        hNewCategory,
+        [],
+        "#new-category",
+        { action: "newCategory" },
+        "#",
+        event
+      );
+    });
+  }
+
+  bindNewCategoryForm(handler) {
+    newCategoryValidation(handler);
   }
 }
 export default ManagerView;

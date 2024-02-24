@@ -160,6 +160,7 @@ hr {
   width: 80%;
   list-style: none;
   display: flex;
+  flex-wrap: wrap;
   text-align: center;
   justify-content: center;
   margin: auto;
@@ -224,18 +225,21 @@ hr {
   border-radius: var(--bs-dropdown-item-border-radius, 0);
 }
 
-#navCats:hover,
 #navCats:active,
+#navCats:hover,
 #navCats:focus,
-#navAller:hover,
 #navAller:active,
+#navAller:hover,
 #navAller:focus,
-#navMenu:hover,
 #navMenu:active,
+#navMenu:hover,
 #navMenu:focus,
-#navRest:hover,
 #navRest:active,
-#navRest:focus {
+#navRest:hover,
+#navRest:focus,
+#navServices:active,
+#navServices:hover,
+#navServices:focus {
   color: white;
 }
 
@@ -314,4 +318,24 @@ main {
 #aux {
   background-image: url("../img/marmol2.jpg");
   background-size: cover;
+}
+
+#new-category {
+  text-align: justify;
+}
+
+.btn-primary {
+  --bs-btn-color: #fff;
+  --bs-btn-bg: #1b1557;
+  --bs-btn-border-color: #1b1557;
+  --bs-btn-hover-color: #fff;
+  --bs-btn-hover-border-color: none;
+  --bs-btn-focus-shadow-rgb: 49, 132, 253;
+  --bs-btn-active-color: #fff;
+  --bs-btn-active-bg: none;
+  --bs-btn-active-border-color: none;
+  --bs-btn-active-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
+  --bs-btn-disabled-color: #fff;
+  --bs-btn-disabled-bg: none;
+  --bs-btn-disabled-border-color: none;
 }
