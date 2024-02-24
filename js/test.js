@@ -19,6 +19,7 @@ const historyActions = {
   dish: (event) => ManagerApp.handleDish(event.state.name),
   newCategory: () => ManagerApp.handleNewCategoryForm(),
   removeCategory: () => ManagerApp.handleRemoveCategoryForm(),
+  newDish: () => ManagerApp.handleNewDishForm(),
 };
 
 history.replaceState({ action: "init" }, null);

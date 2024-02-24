@@ -1,4 +1,4 @@
-import { newCategoryValidation } from "../js/validation.js";
+import { newCategoryValidation, newDishValidation } from "../js/validation.js";
 
 const EXCECUTE_HANDLER = Symbol("excecuteHandler");
 
@@ -96,6 +96,7 @@ class ManagerView {
     );
     const container = document.createElement("ul");
     container.classList.add("dropdown-menu");
+    container.id = "np-Allergens";
     for (const allergen of allergens) {
       container.insertAdjacentHTML(
         "beforeend",
@@ -340,10 +341,10 @@ class ManagerView {
       "beforeend",
       '<li><a id="ldelCategory" class="dropdown-item" href="#del-category">Eliminar categoría</a></li>'
     );
-    // suboptions.insertAdjacentHTML(
-    //   "beforeend",
-    //   '<li><a id="lnewProduct" class="dropdown-item" href="#new-product">Crear producto</a></li>'
-    // );
+    suboptions.insertAdjacentHTML(
+      "beforeend",
+      '<li><a id="lnewDish" class="dropdown-item" href="#new-dish">Crear plato</a></li>'
+    );
     // suboptions.insertAdjacentHTML(
     //   "beforeend",
     //   '<li><a id="ldelProduct" class="dropdown-item" href="#del-product">Eliminar producto</a></li>'
@@ -477,6 +478,169 @@ class ManagerView {
       );
     }
     messageModal.show();
+  }
+
+  showNewDishForm(categories, allergens) {
+    this.main.replaceChildren();
+    this.categories.replaceChildren();
+    const container = document.createElement("div");
+    container.classList.add("container");
+    container.classList.add("my-3");
+    container.id = "new-dish";
+
+    container.insertAdjacentHTML(
+      "afterbegin",
+      '<h1 class="display-5">Nuevo plato</h1>'
+    );
+
+    const form = document.createElement("form");
+    form.name = "fNewDish";
+    form.setAttribute("role", "form");
+    form.setAttribute("novalidate", "");
+    form.classList.add("row");
+    form.classList.add("g-3");
+
+    form.insertAdjacentHTML(
+      "beforeend",
+      `<div class="col-md-6 mb-3">
+				<label class="form-label" for="npBrand">Nombre *</label>
+				<div class="input-group">
+					<input type="text" class="form-control" id="npName" name="npName"
+						placeholder="Nombre" value="" required>
+					<div class="invalid-feedback">El nombre es oblicatorio.</div>
+					<div class="valid-feedback">Correcto.</div>
+				</div>
+			</div>`
+    );
+    form.insertAdjacentHTML(
+      "beforeend",
+      `<div class="col-md-6 mb-3">
+				<label class="form-label" for="npModel">Ingredientes *</label>
+				<div class="input-group">
+					<input type="text" class="form-control" id="npIngredients" name="npIngredients"
+						placeholder="Ingredientes" value="" required>
+					<div class="invalid-feedback">Los ingredientes son obligatorios.</div>
+					<div class="valid-feedback">Correcto.</div>
+				</div>
+			</div>`
+    );
+
+    form.insertAdjacentHTML(
+      "beforeend",
+      `<div class="col-md-12 mb-3"> 
+          <label class="form-label" for="npImg">Nombre de la imagen *</label> 
+          <div class="input-group"> 
+            <input type="file" class="form-control" id="npImg" name="ncpImg" placeholder="Nombre con extensión de la imagen" value="" required> 
+            <div class="invalid-feedback">La imagen no es válida.</div> 
+            <div class="valid-feedback">Correcto.</div> 
+          </div> 
+        </div> `
+    );
+
+    form.insertAdjacentHTML(
+      "beforeend",
+      `<div class="col-md-4 mb-3">
+				<label class="form-label" for="npModel">Descripción *</label>
+				<div class="input-group">
+					<textarea class="form-control" id="npDescription" name="npDescription" rows="4" required></textarea>
+					<div class="invalid-feedback"></div>
+					<div class="invalid-feedback">El plato debe tener una descripción.</div> 
+            <div class="valid-feedback">Correcto.</div> 
+				</div>
+			</div>`
+    );
+
+    form.insertAdjacentHTML(
+      "beforeend",
+      `<div class="col-md-4 mb-3">
+				<label class="form-label" for="npCategories">Categorías *</label>
+				<div class="input-group">
+					<label class="input-group-text" for="npCategories"><i class="bi bi-card-checklist"></i></label>
+					<select class="form-select" name="npCategories" id="npCategories" multiple required>
+					</select>
+					<div class="invalid-feedback">El plato debe pertenecer al menos a una categoría.</div>
+					<div class="valid-feedback">Correcto.</div>
+				</div>
+			</div>`
+    );
+
+    const npCategories = form.querySelector("#npCategories");
+    for (const category of categories) {
+      npCategories.insertAdjacentHTML(
+        "beforeend",
+        `<option value="${category.category.name}">${category.category.name}</option>`
+      );
+    }
+
+    form.insertAdjacentHTML(
+      "beforeend",
+      `<div class="col-md-4 mb-3">
+    		<label class="form-label" for="npAllergens">Alérgenos </label>
+    		<div class="input-group">
+    			<label class="input-group-text" for="npAllergens"><i class="bi bi-card-checklist"></i></label>
+    			<select class="form-select" name="npAllergens" id="npAllergens" multiple>
+    			</select>
+    			<div class="valid-feedback">Correcto.</div>
+    		</div>
+    	</div>`
+    );
+
+    const np_Allergens = document.getElementById("np-Allergens");
+    const npAllergens = form.querySelector("#npAllergens");
+    console.log(np_Allergens);
+    console.log(allergens);
+    for (const allerge of allergens) {
+      console.log(allerge);
+      console.log(allerge.allerge.name);
+      npAllergens.insertAdjacentHTML(
+        "beforeend",
+        `<option value="${allerge.allerge.name}">${allerge.allerge.name}</option>`
+      );
+    }
+
+    form.insertAdjacentHTML(
+      "beforeend",
+      `<div class="mb-12">
+				<button class="btn btn-primary" type="submit">Enviar</button>
+				<button class="btn btn-primary" type="reset">Cancelar</button>
+			</div>`
+    );
+
+    container.append(form);
+    this.main.append(container);
+  }
+
+  showNewDishModal(done, dish, error) {
+    console.log(dish);
+    console.log("---------------------");
+    const messageModalContainer = document.getElementById("messageModal");
+    const messageModal = new bootstrap.Modal("#messageModal");
+
+    const title = document.getElementById("messageModalTitle");
+    title.innerHTML = "Plato creado";
+    const body = messageModalContainer.querySelector(".modal-body");
+    body.replaceChildren();
+    if (done) {
+      body.insertAdjacentHTML(
+        "afterbegin",
+        `<div class="p-3">El plato <strong>${dish.name}</strong> ha sido creado correctamente.</div>`
+      );
+    } else {
+      body.insertAdjacentHTML(
+        "afterbegin",
+        `<div class="error text-danger p-3"><i class="bi bi-exclamation-triangle"></i> El plato <strong>${dish.name}</strong> no ha podido crearse correctamente.</div>`
+      );
+    }
+    messageModal.show();
+    const listener = (event) => {
+      if (done) {
+        document.fNewDish.reset();
+      }
+      document.fNewDish.npName.focus();
+    };
+    messageModalContainer.addEventListener("hidden.bs.modal", listener, {
+      once: true,
+    });
   }
 
   //Creacion de binds
@@ -639,7 +803,7 @@ class ManagerView {
     });
   }
 
-  bindAdminMenu(hNewCategory, hRemoveCategory) {
+  bindAdminMenu(hNewCategory, hRemoveCategory, hNewDishForm) {
     const newCategoryLink = document.getElementById("lnewCategory");
     newCategoryLink.addEventListener("click", (event) => {
       this[EXCECUTE_HANDLER](
@@ -662,6 +826,17 @@ class ManagerView {
         event
       );
     });
+    const newProductLink = document.getElementById("lnewDish");
+    newProductLink.addEventListener("click", (event) => {
+      this[EXCECUTE_HANDLER](
+        hNewDishForm,
+        [],
+        "#new-dish",
+        { action: "newDish" },
+        "#",
+        event
+      );
+    });
   }
 
   bindNewCategoryForm(handler) {
@@ -676,6 +851,10 @@ class ManagerView {
         handler(this.dataset.category);
       });
     }
+  }
+
+  bindNewDishForm(handler) {
+    newDishValidation(handler);
   }
 }
 export default ManagerView;

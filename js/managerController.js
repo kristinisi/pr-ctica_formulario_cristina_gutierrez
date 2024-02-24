@@ -289,7 +289,8 @@ class ManagerController {
     this.onAddAdmin();
     this[VIEW].bindAdminMenu(
       this.handleNewCategoryForm,
-      this.handleRemoveCategoryForm
+      this.handleRemoveCategoryForm,
+      this.handleNewDishForm
     );
   };
 
@@ -391,8 +392,8 @@ class ManagerController {
   };
 
   handleCreateCategory = (name, img, desc) => {
-    const index = img.indexOf("_");
-    img = img.substring(index);
+    const index = img.lastIndexOf("\\");
+    img = img.substring(index + 1);
     const cat = this[MODEL].createCategory(name);
     cat.image = "./img/" + img;
     cat.description = desc;
@@ -429,6 +430,42 @@ class ManagerController {
       error = exception;
     }
     this[VIEW].showRemoveCategoryModal(done, cat, error);
+  };
+
+  handleNewDishForm = () => {
+    this[VIEW].showNewDishForm(this[MODEL].categories, this[MODEL].allergens);
+    this[VIEW].bindNewDishForm(this.handleCreateDish);
+  };
+
+  handleCreateDish = (name, ingredients, img, desc, categories, allergens) => {
+    let done;
+    let error;
+    let dish;
+
+    try {
+      const index = img.lastIndexOf("\\");
+      img = img.substring(index + 1);
+      dish = this[MODEL].createDish(name);
+      dish.ingredients = ingredients;
+      dish.image = "./img/" + img;
+      dish.description = desc;
+      categories.forEach((name) => {
+        const category = this[MODEL].createCategory(name);
+        this[MODEL].assignCategoryToDish(category, dish);
+      });
+      allergens.forEach((name) => {
+        const allergen = this[MODEL].createAllergen(name);
+        this[MODEL].assignAllergenToDish(allergen, dish);
+      });
+      done = true;
+    } catch (exception) {
+      done = false;
+      error = exception;
+    }
+    console.log(done);
+    console.log(error);
+
+    this[VIEW].showNewDishModal(done, dish, error);
   };
 }
 export default ManagerController;

@@ -320,7 +320,8 @@ main {
   background-size: cover;
 }
 
-#new-category {
+#new-category,
+#new-dish {
   text-align: justify;
 }
 

@@ -85,7 +85,108 @@ function newCategoryValidation(handler) {
     this.ncName.focus();
   });
   form.ncName.addEventListener("change", defaultCheckElement);
-  //   form.ncImg.addEventListener("change", defaultCheckElement);
 }
 
-export { newCategoryValidation };
+function newDishValidation(handler) {
+  const form = document.forms.fNewDish;
+  form.setAttribute("novalidate", "");
+
+  form.addEventListener("submit", function (event) {
+    let isValid = true;
+    let firstInvalidElement = null;
+
+    this.npDescription.value = this.npDescription.value.trim();
+
+    if (!this.npName.checkValidity()) {
+      isValid = false;
+      showFeedBack(this.npName, false);
+      firstInvalidElement = this.npName;
+    } else {
+      showFeedBack(this.npName, true);
+    }
+
+    if (!this.npIngredients.checkValidity()) {
+      isValid = false;
+      showFeedBack(this.npIngredients, false);
+      firstInvalidElement = this.npIngredients;
+    } else {
+      showFeedBack(this.npIngredients, true);
+    }
+
+    if (!this.npImg.checkValidity() || !isValidImage(this.npImg)) {
+      isValid = false;
+      showFeedBack(this.npImg, false);
+      firstInvalidElement = this.npImg;
+    } else {
+      showFeedBack(this.npImg, true);
+    }
+
+    if (!this.npDescription.checkValidity()) {
+      isValid = false;
+      showFeedBack(this.npDescription, false);
+      firstInvalidElement = this.npDescription;
+    } else {
+      showFeedBack(this.npDescription, true);
+    }
+
+    if (!this.npCategories.checkValidity()) {
+      isValid = false;
+      showFeedBack(this.npCategories, false);
+      firstInvalidElement = this.npCategories;
+    } else {
+      showFeedBack(this.npCategories, true);
+    }
+
+    if (!this.npAllergens.checkValidity()) {
+      isValid = false;
+      showFeedBack(this.npAllergens, false);
+      firstInvalidElement = this.npAllergens;
+    } else {
+      showFeedBack(this.npAllergens, true);
+    }
+
+    if (!isValid) {
+      firstInvalidElement.focus();
+    } else {
+      const categories = [...this.npCategories.selectedOptions].map(
+        (option) => option.value
+      );
+      const allergens = [...this.npAllergens.selectedOptions].map(
+        (option) => option.value
+      );
+      const ingredients = this.npIngredients.value;
+      const arrayIngredients = ingredients.split(",");
+      handler(
+        this.npName.value,
+        arrayIngredients,
+        this.npImg.value,
+        this.npDescription.value,
+        categories,
+        allergens
+      );
+    }
+
+    event.preventDefault();
+    event.stopPropagation();
+  });
+
+  form.addEventListener("reset", function (event) {
+    for (const div of this.querySelectorAll(
+      "div.valid-feedback, div.invalid-feedback"
+    )) {
+      div.classList.remove("d-block");
+      div.classList.add("d-none");
+    }
+    for (const input of this.querySelectorAll("input")) {
+      input.classList.remove("is-valid");
+      input.classList.remove("is-invalid");
+    }
+    this.npName.focus();
+  });
+
+  form.npName.addEventListener("change", defaultCheckElement);
+  form.npIngredients.addEventListener("change", defaultCheckElement);
+  form.npDescription.addEventListener("change", defaultCheckElement);
+}
+
+export { newCategoryValidation, newDishValidation };
