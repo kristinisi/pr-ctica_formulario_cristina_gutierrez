@@ -157,7 +157,7 @@ hr {
 }
 
 #categories {
-  width: 80%;
+  width: 100%;
   list-style: none;
   display: flex;
   flex-wrap: wrap;
@@ -338,4 +338,19 @@ main {
   --bs-btn-disabled-color: #fff;
   --bs-btn-disabled-bg: none;
   --bs-btn-disabled-border-color: none;
+}
+
+#remove-category {
+  display: flex;
+  flex-wrap: wrap;
+  width: 90%;
+  justify-content: space-around; /* Ajusta el espacio entre los elementos */
+  align-items: flex-start; /* Alinea los elementos al inicio del contenedor */
+}
+
+.categories-eliminar {
+  flex-basis: calc(
+    33.33% - 20px
+  ); /* Establece el ancho base de cada elemento */
+  margin: 10px; /* Espacio entre los elementos */
 }

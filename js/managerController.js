@@ -287,7 +287,10 @@ class ManagerController {
     this.onAddMenu();
     this.onAddRestaurant();
     this.onAddAdmin();
-    this[VIEW].bindAdminMenu(this.handleNewCategoryForm);
+    this[VIEW].bindAdminMenu(
+      this.handleNewCategoryForm,
+      this.handleRemoveCategoryForm
+    );
   };
 
   onInit = () => {
@@ -375,7 +378,6 @@ class ManagerController {
   };
 
   handleClose = (pag) => {
-    console.log(pag);
     pag.forEach((value) => {
       value.close();
     });
@@ -405,6 +407,28 @@ class ManagerController {
       error = exception;
     }
     this[VIEW].showNewCategoryModal(done, cat, error);
+  };
+
+  handleRemoveCategoryForm = () => {
+    this[VIEW].showRemoveCategoryForm(this[MODEL].categories);
+    this[VIEW].bindRemoveCategoryForm(this.handleRemoveCategory);
+  };
+
+  handleRemoveCategory = (name) => {
+    let done;
+    let error;
+    let cat;
+    try {
+      cat = this[MODEL].createCategory(name);
+      this[MODEL].removeCategory(cat);
+      done = true;
+      this.onAddCategory();
+      this.handleRemoveCategoryForm();
+    } catch (exception) {
+      done = false;
+      error = exception;
+    }
+    this[VIEW].showRemoveCategoryModal(done, cat, error);
   };
 }
 export default ManagerController;

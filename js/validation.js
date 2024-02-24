@@ -55,6 +55,13 @@ function newCategoryValidation(handler) {
     } else {
       showFeedBack(this.ncName, true);
     }
+    if (!this.ncDescription.checkValidity()) {
+      isValid = false;
+      showFeedBack(this.ncDescription, false);
+      firstInvalidElement = this.ncDescription;
+    } else {
+      showFeedBack(this.ncName, true);
+    }
     if (!isValid) {
       firstInvalidElement.focus();
     } else {
