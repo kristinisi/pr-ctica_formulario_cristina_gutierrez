@@ -321,7 +321,8 @@ main {
 }
 
 #new-category,
-#new-dish {
+#new-dish,
+#remove-dish {
   text-align: justify;
 }
 
@@ -354,4 +355,12 @@ main {
     33.33% - 20px
   ); /* Establece el ancho base de cada elemento */
   margin: 10px; /* Espacio entre los elementos */
+}
+
+.row {
+  justify-content: space-around;
+}
+
+.card-text {
+  text-align: left;
 }

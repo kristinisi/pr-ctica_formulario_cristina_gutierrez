@@ -290,7 +290,8 @@ class ManagerController {
     this[VIEW].bindAdminMenu(
       this.handleNewCategoryForm,
       this.handleRemoveCategoryForm,
-      this.handleNewDishForm
+      this.handleNewDishForm,
+      this.handleRemoveDishForm
     );
   };
 
@@ -466,6 +467,28 @@ class ManagerController {
     console.log(error);
 
     this[VIEW].showNewDishModal(done, dish, error);
+  };
+
+  handleRemoveDishForm = () => {
+    this[VIEW].showRemoveDishForm(
+      this[MODEL].categories,
+      this[MODEL].allergens
+    );
+    this[VIEW].bindRemoveDishSelects(
+      //se enlazan los dos handlers
+      this.handleRemoveDishListByCategory,
+      this.handleRemoveDishListByAllergens
+    );
+  };
+
+  handleRemoveDishListByCategory = (category) => {
+    const cat = this[MODEL].createCategory(category);
+    this[VIEW].showRemoveDishList(this[MODEL].getDishesInCategroy(cat));
+  };
+
+  handleRemoveDishListByAllergens = (allergen) => {
+    const aller = this[MODEL].createAllergen(allergen);
+    this[VIEW].showRemoveDishList(this[MODEL].getDishesWithAllergen(aller));
   };
 }
 export default ManagerController;

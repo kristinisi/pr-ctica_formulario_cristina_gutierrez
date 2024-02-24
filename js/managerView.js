@@ -345,10 +345,10 @@ class ManagerView {
       "beforeend",
       '<li><a id="lnewDish" class="dropdown-item" href="#new-dish">Crear plato</a></li>'
     );
-    // suboptions.insertAdjacentHTML(
-    //   "beforeend",
-    //   '<li><a id="ldelProduct" class="dropdown-item" href="#del-product">Eliminar producto</a></li>'
-    // );
+    suboptions.insertAdjacentHTML(
+      "beforeend",
+      '<li><a id="ldelDish" class="dropdown-item" href="#del-dish">Eliminar plato</a></li>'
+    );
     menuOption.append(suboptions);
     this.menu.append(menuOption);
   }
@@ -643,6 +643,115 @@ class ManagerView {
     });
   }
 
+  showRemoveDishForm(categories, allergens) {
+    this.main.replaceChildren();
+    this.categories.replaceChildren();
+
+    const container = document.createElement("div");
+    container.classList.add("container");
+    container.classList.add("my-3");
+    container.id = "remove-dish";
+
+    container.insertAdjacentHTML(
+      "afterbegin",
+      '<h1 class="display-5">Eliminar un plato</h1>'
+    );
+
+    const form = document.createElement("form");
+    form.name = "fDelDish";
+    form.setAttribute("role", "form");
+    form.setAttribute("novalidate", "");
+    form.classList.add("row");
+    form.classList.add("g-3");
+
+    form.insertAdjacentHTML(
+      "beforeend",
+      `<div class="col-md-6 mb-3">
+				<label class="form-label" for="npCategories">Categorías del producto</label>
+				<div class="input-group">
+					<label class="input-group-text" for="rpCategories"><i class="bi bi-card-checklist"></i></label>
+					<select class="form-select" name="rpCategories" id="rpCategories">
+						<option disabled selected>Selecciona una categoría</option>
+					</select>
+				</div>
+			</div>`
+    );
+    const rpCategories = form.querySelector("#rpCategories");
+    for (const category of categories) {
+      rpCategories.insertAdjacentHTML(
+        "beforeend",
+        `<option value="${category.category.name}">${category.category.name}</option>`
+      );
+    }
+
+    form.insertAdjacentHTML(
+      "beforeend",
+      `<div class="col-md-6 mb-3">
+				<label class="form-label" for="npAllegens">Alérgenos del producto</label>
+				<div class="input-group">
+					<label class="input-group-text" for="rpAllergens"><i class="bi bi-card-checklist"></i></label>
+					<select class="form-select" name="rpAllergens" id="rpAllergens">
+						<option disabled selected>Selecciona un alérgeno</option>
+					</select>
+				</div>
+			</div>`
+    );
+    const np_Allergens = document.getElementById("np-Allergens");
+    const rpAllergens = form.querySelector("#rpAllergens");
+    console.log(np_Allergens);
+    console.log(allergens);
+    for (const allerge of allergens) {
+      rpAllergens.insertAdjacentHTML(
+        "beforeend",
+        `<option value="${allerge.allerge.name}">${allerge.allerge.name}</option>`
+      );
+    }
+
+    container.append(form);
+    container.insertAdjacentHTML(
+      "beforeend",
+      '<div id="dish-list" class="container my-3"><div class="row"></div></div>'
+    );
+
+    this.main.append(container);
+  }
+
+  showRemoveDishList(dishes) {
+    const listContainer = document
+      .getElementById("dish-list")
+      .querySelector("div.row");
+    listContainer.replaceChildren();
+
+    let exist = false;
+    for (const dish of dishes) {
+      exist = true;
+      listContainer.insertAdjacentHTML(
+        "beforeend",
+        `<div class="card mb-3" style="max-width: 600px;">
+              <div class="col-md-12 mb-3">
+              <div class="col-md-4">
+                <img src="${dish.image}" class="img-fluid rounded-start">
+              </div>  
+              <div class="col-md-8">
+                <div class="card-body">
+                  <h5 class="card-title">${dish.name}</h5>
+                  <p class="card-text">${dish.description}</p>
+                  <p class="card-text"><small class="text-body-secondary">${dish.ingredients}</small></p>
+                </div>
+              </div>
+          </div>
+          <div class="bottom-wrap"> <a href="#" data-name="${dish.name}" class="btn btn-primary float-right"> Eliminar </a></div>
+        `
+      );
+    }
+    if (!exist) {
+      listContainer.insertAdjacentHTML(
+        "beforeend",
+        '<p class="text-danger"><i class="bi bi-exclamation-triangle"></i> No existen productos para esta categoría o tipo.</p>'
+      );
+    }
+  }
+
   //Creacion de binds
   bindInit(handler) {
     document.getElementById("init").addEventListener("click", (event) => {
@@ -803,7 +912,7 @@ class ManagerView {
     });
   }
 
-  bindAdminMenu(hNewCategory, hRemoveCategory, hNewDishForm) {
+  bindAdminMenu(hNewCategory, hRemoveCategory, hNewDishForm, hRemoveDish) {
     const newCategoryLink = document.getElementById("lnewCategory");
     newCategoryLink.addEventListener("click", (event) => {
       this[EXCECUTE_HANDLER](
@@ -837,6 +946,17 @@ class ManagerView {
         event
       );
     });
+    const delProductLink = document.getElementById("ldelDish");
+    delProductLink.addEventListener("click", (event) => {
+      this[EXCECUTE_HANDLER](
+        hRemoveDish,
+        [],
+        "#remove-dish",
+        { action: "removeDish" },
+        "#",
+        event
+      );
+    });
   }
 
   bindNewCategoryForm(handler) {
@@ -855,6 +975,38 @@ class ManagerView {
 
   bindNewDishForm(handler) {
     newDishValidation(handler);
+  }
+
+  //creamos el bind para ambos select de borrado
+  bindRemoveDishSelects(hCategories, hAllergens) {
+    const rpCategories = document.getElementById("rpCategories");
+    rpCategories.addEventListener("change", (event) => {
+      this[EXCECUTE_HANDLER](
+        hCategories,
+        [event.currentTarget.value],
+        "#remove-dish",
+        {
+          action: "removeDishByCategory",
+          category: event.currentTarget.value,
+        },
+        "#remove-dish",
+        event
+      );
+    });
+    const rpAllergens = document.getElementById("rpAllergens");
+    rpAllergens.addEventListener("change", (event) => {
+      this[EXCECUTE_HANDLER](
+        hAllergens,
+        [event.currentTarget.value],
+        "#remove-dish",
+        {
+          action: "removeDishByAllergen",
+          allergen: event.currentTarget.value,
+        },
+        "#remove-dish",
+        event
+      );
+    });
   }
 }
 export default ManagerView;

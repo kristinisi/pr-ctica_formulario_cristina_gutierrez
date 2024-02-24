@@ -20,6 +20,15 @@ const historyActions = {
   newCategory: () => ManagerApp.handleNewCategoryForm(),
   removeCategory: () => ManagerApp.handleRemoveCategoryForm(),
   newDish: () => ManagerApp.handleNewDishForm(),
+  removeDish: () => ManagerApp.handleRemoveDishForm(),
+  removeDishByCategory: (event) => {
+    ManagerApp.handleRemoveDishForm();
+    ManagerApp.handleRemoveDishListByCategory(event.state.category);
+  },
+  removeDishByAllergen: (event) => {
+    ManagerApp.handleRemoveDishForm();
+    ManagerApp.handleRemoveDishListByAllergen(event.state.allergen);
+  },
 };
 
 history.replaceState({ action: "init" }, null);
