@@ -322,7 +322,8 @@ main {
 
 #new-category,
 #new-dish,
-#remove-dish {
+#remove-dish,
+#new-restaurant {
   text-align: justify;
 }
 

@@ -39,7 +39,6 @@ function newCategoryValidation(handler) {
     let isValid = true;
     let firstInvalidElement = null;
     this.ncDescription.value = this.ncDescription.value.trim();
-    showFeedBack(this.ncDescription, true);
 
     if (!this.ncImg.checkValidity() || !isValidImage(this.ncImg)) {
       isValid = false;
@@ -85,6 +84,7 @@ function newCategoryValidation(handler) {
     this.ncName.focus();
   });
   form.ncName.addEventListener("change", defaultCheckElement);
+  form.ncDescription.addEventListener("change", defaultCheckElement);
 }
 
 function newDishValidation(handler) {
@@ -189,4 +189,59 @@ function newDishValidation(handler) {
   form.npDescription.addEventListener("change", defaultCheckElement);
 }
 
-export { newCategoryValidation, newDishValidation };
+function newRestaurantValidation(handler) {
+  const form = document.forms.fNewRestaurant;
+  form.setAttribute("novalidate", true);
+  form.addEventListener("submit", function (event) {
+    let isValid = true;
+    let firstInvalidElement = null;
+    this.nrDescription.value = this.nrDescription.value.trim();
+
+    if (!this.nrImg.checkValidity() || !isValidImage(this.nrImg)) {
+      isValid = false;
+      showFeedBack(this.nrImg, false);
+      firstInvalidElement = this.nrImg;
+    } else {
+      showFeedBack(this.nrImg, true);
+    }
+    if (!this.nrName.checkValidity()) {
+      isValid = false;
+      showFeedBack(this.nrName, false);
+      firstInvalidElement = this.nrName;
+    } else {
+      showFeedBack(this.nrName, true);
+    }
+    if (!this.nrDescription.checkValidity()) {
+      isValid = false;
+      showFeedBack(this.nrDescription, false);
+      firstInvalidElement = this.nrDescription;
+    } else {
+      showFeedBack(this.nrName, true);
+    }
+    if (!isValid) {
+      firstInvalidElement.focus();
+    } else {
+      handler(this.nrName.value, this.nrImg.value, this.nrDescription.value);
+    }
+    event.preventDefault();
+    event.stopPropagation();
+  });
+
+  form.addEventListener("reset", function (event) {
+    for (const div of this.querySelectorAll(
+      "div.valid-feedback, div.invalid-feedback"
+    )) {
+      div.classList.remove("d-block");
+      div.classList.add("d-none");
+    }
+    for (const input of this.querySelectorAll("input")) {
+      input.classList.remove("is-valid");
+      input.classList.remove("is-invalid");
+    }
+    this.nrName.focus();
+  });
+  form.nrName.addEventListener("change", defaultCheckElement);
+  form.nrDescription.addEventListener("change", defaultCheckElement);
+}
+
+export { newCategoryValidation, newDishValidation, newRestaurantValidation };

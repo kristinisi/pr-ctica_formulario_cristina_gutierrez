@@ -291,7 +291,8 @@ class ManagerController {
       this.handleNewCategoryForm,
       this.handleRemoveCategoryForm,
       this.handleNewDishForm,
-      this.handleRemoveDishForm
+      this.handleRemoveDishForm,
+      this.handleNewRestaurantForm
     );
   };
 
@@ -484,11 +485,53 @@ class ManagerController {
   handleRemoveDishListByCategory = (category) => {
     const cat = this[MODEL].createCategory(category);
     this[VIEW].showRemoveDishList(this[MODEL].getDishesInCategroy(cat));
+    this[VIEW].bindRemoveDish(this.handleRemoveDish);
   };
 
   handleRemoveDishListByAllergens = (allergen) => {
     const aller = this[MODEL].createAllergen(allergen);
     this[VIEW].showRemoveDishList(this[MODEL].getDishesWithAllergen(aller));
+    this[VIEW].bindRemoveDish(this.handleRemoveDish);
+  };
+
+  handleRemoveDish = (name) => {
+    let done;
+    let error;
+    let dish;
+    try {
+      dish = this[MODEL].createDish(name);
+      console.log(dish);
+      this[MODEL].removeDish(dish);
+      done = true;
+    } catch (exception) {
+      done = false;
+      error = exception;
+    }
+    this[VIEW].showRemoveDishModal(done, dish, error);
+  };
+
+  handleNewRestaurantForm = () => {
+    this[VIEW].showNewRestaurantForm();
+    this[VIEW].bindNewRestaurantForm(this.handleCreateRestaurant);
+  };
+
+  handleCreateRestaurant = (name, img, desc) => {
+    const index = img.lastIndexOf("\\");
+    img = img.substring(index + 1);
+    const res = this[MODEL].createRestaurant(name);
+    res.image = "./img/" + img;
+    res.description = desc;
+    let done;
+    let error;
+    try {
+      this[MODEL].addRestaurant(res);
+      done = true;
+      this.onAddRestaurant();
+    } catch (exception) {
+      done = false;
+      error = exception;
+    }
+    this[VIEW].showNewRestaurantModal(done, res, error);
   };
 }
 export default ManagerController;

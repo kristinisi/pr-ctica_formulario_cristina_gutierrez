@@ -27,8 +27,9 @@ const historyActions = {
   },
   removeDishByAllergen: (event) => {
     ManagerApp.handleRemoveDishForm();
-    ManagerApp.handleRemoveDishListByAllergen(event.state.allergen);
+    ManagerApp.handleRemoveDishListByAllergens(event.state.allergen);
   },
+  newRestaurant: () => ManagerApp.handleNewRestaurantForm(),
 };
 
 history.replaceState({ action: "init" }, null);
