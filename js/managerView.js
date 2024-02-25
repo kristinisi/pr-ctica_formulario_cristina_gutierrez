@@ -373,6 +373,10 @@ class ManagerView {
       "beforeend",
       '<li><a id="lDesassignDish" class="dropdown-item" href="#desassign-dish">Desasignar plato a menú</a></li>'
     );
+    suboptions.insertAdjacentHTML(
+      "beforeend",
+      '<li><a id="lChangeDish" class="dropdown-item" href="#change-dish">Cambiar posición platos</a></li>'
+    );
 
     menuOption.append(suboptions);
     this.menu.append(menuOption);
@@ -762,7 +766,7 @@ class ManagerView {
     if (!exist) {
       listContainer.insertAdjacentHTML(
         "beforeend",
-        '<p class="text-danger"><i class="bi bi-exclamation-triangle"></i> No existen productos para esta categoría o tipo.</p>'
+        '<p class="text-danger"><i class="bi bi-exclamation-triangle"></i> No existen plato para esta categoría o Alérgeno.</p>'
       );
     }
   }
@@ -1069,7 +1073,7 @@ class ManagerView {
     if (!exist) {
       listContainer.insertAdjacentHTML(
         "beforeend",
-        '<p class="text-danger"><i class="bi bi-exclamation-triangle"></i> No existen productos para esta categoría o tipo.</p>'
+        '<p class="text-danger"><i class="bi bi-exclamation-triangle"></i> No existen platos para este menú.</p>'
       );
     }
   }
@@ -1106,6 +1110,130 @@ class ManagerView {
     messageModalContainer.addEventListener("hidden.bs.modal", listener, {
       once: true,
     });
+  }
+
+  showChangeDishForm(menus) {
+    this.main.replaceChildren();
+    this.categories.replaceChildren();
+
+    const container = document.createElement("div");
+    container.classList.add("container");
+    container.classList.add("my-3");
+    container.id = "change-dish";
+
+    container.insertAdjacentHTML(
+      "afterbegin",
+      '<h1 class="display-5">Cambiar posición de dos platos en un menú</h1>'
+    );
+
+    const form = document.createElement("form");
+    form.name = "fChanDish";
+    form.id = "fChanDish";
+    form.setAttribute("role", "form");
+    form.setAttribute("novalidate", "");
+    form.classList.add("row");
+    form.classList.add("g-3");
+
+    form.insertAdjacentHTML(
+      "beforeend",
+      `<div class="col-md-12 mb-3">
+				<label class="form-label" for="chMenu">Menús</label>
+				<div class="input-group">
+					<label class="input-group-text" for="chMenu"><i class="bi bi-card-checklist"></i></label>
+					<select class="form-select" name="chMenu" id="chMenu">
+						<option disabled selected>Selecciona un menú</option>
+					</select>
+				</div>
+			</div>`
+    );
+    const chMenu = form.querySelector("#chMenu");
+    for (const menu of menus) {
+      chMenu.insertAdjacentHTML(
+        "beforeend",
+        `<option value="${menu.menu.name}">${menu.menu.name}</option>`
+      );
+    }
+
+    container.append(form);
+    container.insertAdjacentHTML(
+      "beforeend",
+      '<div id="chdish-list" class="container my-3"><div class="row"></div></div>'
+    );
+
+    this.main.append(container);
+  }
+
+  showChangeDishList(dishes, menu) {
+    const listContainer = document
+      .getElementById("chdish-list")
+      .querySelector("div.row");
+    3;
+    listContainer.replaceChildren();
+    const form = document.getElementById("fChanDish");
+    let exist = false;
+
+    form.insertAdjacentHTML(
+      "beforeend",
+      `<div class="col-md-6 mb-3">
+		<label class="form-label" for="chPlato1">Primer plato</label>
+		<div class="input-group">
+			<label class="input-group-text" for="chPlato1"><i class="bi bi-card-checklist"></i></label>
+			<select class="form-select" name="chPlato1" id="chPlato1">
+				<option disabled selected>Selecciona el primer plato</option>
+			</select>
+		</div>
+	</div>
+  <div class="col-md-6 mb-3">
+		<label class="form-label" for="chPlato2">Segundo plato</label>
+		<div class="input-group">
+			<label class="input-group-text" for="chPlato2"><i class="bi bi-card-checklist"></i></label>
+			<select class="form-select" name="chPlato2" id="chPlato2">
+				<option disabled selected>Selecciona el segundo plato</option>
+			</select>
+		</div>
+	</div>`
+    );
+    const chPlato1 = form.querySelector("#chPlato1");
+    const chPlato2 = form.querySelector("#chPlato2");
+    for (const dish of dishes) {
+      exist = true;
+      chPlato1.insertAdjacentHTML(
+        "beforeend",
+        `<option value="${dish.name}">${dish.name}</option>`
+      );
+      chPlato2.insertAdjacentHTML(
+        "beforeend",
+        `<option value="${dish.name}">${dish.name}</option>`
+      );
+    }
+
+    //   form.insertAdjacentHTML(
+    //     "beforeend",
+    //     `<div class="col-md-6 mb-3">
+    // 	<label class="form-label" for="chPlato2">Segundo plato</label>
+    // 	<div class="input-group">
+    // 		<label class="input-group-text" for="chPlato2"><i class="bi bi-card-checklist"></i></label>
+    // 		<select class="form-select" name="chPlato2" id="chPlato2">
+    // 			<option disabled selected>Selecciona el segundo plato</option>
+    // 		</select>
+    // 	</div>
+    // </div>`
+    //   );
+
+    // const chPlato2 = form.querySelector("#chPlato2");
+    // console.log(chPlato2);
+    // for (const dish of dishes) {
+    //   chPlato2.insertAdjacentHTML(
+    //     "beforeend",
+    //     `<option value="${dish.name}">${dish.name}</option>`
+    //   );
+    // }
+    if (!exist) {
+      listContainer.insertAdjacentHTML(
+        "beforeend",
+        '<p class="text-danger"><i class="bi bi-exclamation-triangle"></i> No existen platos para este menu</p>'
+      );
+    }
   }
 
   //Creacion de binds
@@ -1274,7 +1402,8 @@ class ManagerView {
     hRemoveDish,
     hNewRestaurant,
     hAssignDishForm,
-    hDesassignDishForm
+    hDesassignDishForm,
+    hChangeDishForm
   ) {
     const newCategoryLink = document.getElementById("lnewCategory");
     newCategoryLink.addEventListener("click", (event) => {
@@ -1349,6 +1478,17 @@ class ManagerView {
         [],
         "#desassign-dish",
         { action: "desassignDish" },
+        "#",
+        event
+      );
+    });
+    const changeDishLink = document.getElementById("lChangeDish");
+    changeDishLink.addEventListener("click", (event) => {
+      this[EXCECUTE_HANDLER](
+        hChangeDishForm,
+        [],
+        "#change-dish",
+        { action: "changeDish" },
         "#",
         event
       );
@@ -1451,6 +1591,23 @@ class ManagerView {
         event.preventDefault();
       });
     }
+  }
+
+  bindChangeDishSelects(hMenu) {
+    const chMenu = document.getElementById("chMenu");
+    chMenu.addEventListener("change", (event) => {
+      this[EXCECUTE_HANDLER](
+        hMenu,
+        [event.currentTarget.value],
+        "#change-dish",
+        {
+          action: "changeDishByMenu",
+          menu: event.currentTarget.value,
+        },
+        "#change-dish",
+        event
+      );
+    });
   }
 }
 export default ManagerView;

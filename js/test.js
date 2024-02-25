@@ -36,6 +36,11 @@ const historyActions = {
     ManagerApp.handleDesassignDishForm();
     ManagerApp.handleDesassignDishListByMenu(event.state.category);
   },
+  changeDish: () => ManagerApp.handleChangeDishForm(),
+  changeDishByMenu: (event) => {
+    ManagerApp.handleChangeDishForm();
+    ManagerApp.handleChangeDishListByMenu(event.state.category);
+  },
 };
 
 history.replaceState({ action: "init" }, null);

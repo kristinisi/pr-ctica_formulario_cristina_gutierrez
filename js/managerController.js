@@ -294,7 +294,8 @@ class ManagerController {
       this.handleRemoveDishForm,
       this.handleNewRestaurantForm,
       this.handleAssignDishForm,
-      this.handleDesassignDishForm
+      this.handleDesassignDishForm,
+      this.handleChangeDishForm
     );
   };
 
@@ -573,6 +574,7 @@ class ManagerController {
     );
     this[VIEW].bindDesassignDish(this.handleDesassignDish);
   };
+
   handleDesassignDish = (name, menu) => {
     let done;
     let error;
@@ -592,6 +594,20 @@ class ManagerController {
       error = exception;
     }
     this[VIEW].showDesassignDishModal(done, dish, error);
+  };
+
+  handleChangeDishForm = () => {
+    this[VIEW].showChangeDishForm(this[MODEL].menus);
+    this[VIEW].bindChangeDishSelects(this.handleChangeDishListByMenu);
+  };
+
+  handleChangeDishListByMenu = (menu) => {
+    const menu_obj = this[MODEL].createMenu(menu);
+    this[VIEW].showChangeDishList(
+      this[MODEL].getDishesWithMenu(menu_obj),
+      menu_obj
+    );
+    // this[VIEW].bindChangeDish(this.handleChangeDish);
   };
 }
 export default ManagerController;
