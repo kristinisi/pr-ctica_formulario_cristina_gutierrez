@@ -284,7 +284,7 @@ class ManagerView {
           <img src="${restaurant.restaurant.image}" class="card-img">
           <div class="card-img-overlay">
             <h5 class="card-title">${restaurant.restaurant.name}</h5>
-            <p class="card-text">${restaurant.restaurant.description}</p>
+            <p class="card-text text-rest">${restaurant.restaurant.description}</p>
           </div>
         </div>
         `
