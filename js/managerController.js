@@ -562,11 +562,36 @@ class ManagerController {
     this[VIEW].showDesassignDishForm(this[MODEL].menus);
     console.log(this[MODEL].menus);
 
-    // this[VIEW].bindRemoveDishSelects(
-    //   //se enlazan los dos handlers
-    //   this.handleRemoveDishListByCategory,
-    //   this.handleRemoveDishListByAllergens
-    // );
+    this[VIEW].bindDesassignDishSelects(this.handleDesassignDishListByMenu);
+  };
+
+  handleDesassignDishListByMenu = (menu) => {
+    const menu_obj = this[MODEL].createMenu(menu);
+    this[VIEW].showDesassignDishList(
+      this[MODEL].getDishesWithMenu(menu_obj),
+      menu_obj
+    );
+    this[VIEW].bindDesassignDish(this.handleDesassignDish);
+  };
+  handleDesassignDish = (name, menu) => {
+    let done;
+    let error;
+    let dish;
+    let menu_obj;
+    console.log(name);
+    console.log(menu);
+    try {
+      dish = this[MODEL].createDish(name);
+      console.log(dish);
+      menu_obj = this[MODEL].createMenu(menu);
+      console.log(menu_obj);
+      this[MODEL].deassignDishToMenu(menu_obj, dish);
+      done = true;
+    } catch (exception) {
+      done = false;
+      error = exception;
+    }
+    this[VIEW].showDesassignDishModal(done, dish, error);
   };
 }
 export default ManagerController;

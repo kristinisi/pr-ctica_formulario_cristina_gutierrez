@@ -323,7 +323,8 @@ main {
 #new-category,
 #new-dish,
 #remove-dish,
-#new-restaurant {
+#new-restaurant,
+#desassign-dish {
   text-align: justify;
 }
 

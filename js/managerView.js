@@ -1031,10 +1031,81 @@ class ManagerView {
     container.append(form);
     container.insertAdjacentHTML(
       "beforeend",
-      '<div id="dish-list" class="container my-3"><div class="row"></div></div>'
+      '<div id="desdish-list" class="container my-3"><div class="row"></div></div>'
     );
 
     this.main.append(container);
+  }
+
+  showDesassignDishList(dishes, menu) {
+    const listContainer = document
+      .getElementById("desdish-list")
+      .querySelector("div.row");
+    3;
+    listContainer.replaceChildren();
+
+    let exist = false;
+    for (const dish of dishes) {
+      exist = true;
+      listContainer.insertAdjacentHTML(
+        "beforeend",
+        `<div class="card mb-3" style="max-width: 600px;">
+              <div class="col-md-12 mb-3">
+              <div class="col-md-4">
+                <img src="${dish.image}" class="img-fluid rounded-start">
+              </div>  
+              <div class="col-md-8">
+                <div class="card-body">
+                  <h5 class="card-title">${dish.name}</h5>
+                  <p class="card-text">${dish.description}</p>
+                  <p class="card-text"><small class="text-body-secondary">${dish.ingredients}</small></p>
+                </div>
+              </div>
+          </div>
+          <div class="bottom-wrap"> <a href="#" data-name="${dish.name}" data-menu="${menu.name}" class="btn btn-primary float-right"> Eliminar </a></div>
+        `
+      );
+    }
+    if (!exist) {
+      listContainer.insertAdjacentHTML(
+        "beforeend",
+        '<p class="text-danger"><i class="bi bi-exclamation-triangle"></i> No existen productos para esta categoría o tipo.</p>'
+      );
+    }
+  }
+
+  showDesassignDishModal(done, dish, error) {
+    const dishList = document.getElementById("desdish-list");
+    const messageModalContainer = document.getElementById("messageModal");
+    const messageModal = new bootstrap.Modal("#messageModal");
+
+    const title = document.getElementById("messageModalTitle");
+    title.innerHTML = "Desasignación de platos en menú";
+    const body = messageModalContainer.querySelector(".modal-body");
+    body.replaceChildren();
+    if (done) {
+      body.insertAdjacentHTML(
+        "afterbegin",
+        `<div class="p-3">El plato <strong>${dish.name}</strong> ha sido desasignado correctamente.</div>`
+      );
+    } else {
+      body.insertAdjacentHTML(
+        "afterbegin",
+        '<div class="error text-danger p-3"><i class="bi bi-exclamation-triangle"></i> El plato no existe en el restaurante.</div>'
+      );
+    }
+    messageModal.show();
+    const listener = (event) => {
+      if (done) {
+        const button = dishList.querySelector(
+          `a.btn[data-name="${dish.name}"]`
+        );
+        button.parentElement.parentElement.remove();
+      }
+    };
+    messageModalContainer.addEventListener("hidden.bs.modal", listener, {
+      once: true,
+    });
   }
 
   //Creacion de binds
@@ -1351,6 +1422,35 @@ class ManagerView {
 
   bindAssignDishForm(handler) {
     AssignDishValidation(handler);
+  }
+
+  bindDesassignDishSelects(hMenu) {
+    const ndMenu = document.getElementById("ndMenu");
+    ndMenu.addEventListener("change", (event) => {
+      this[EXCECUTE_HANDLER](
+        hMenu,
+        [event.currentTarget.value],
+        "#desassign-dish",
+        {
+          action: "desassignDishByMenu",
+          menu: event.currentTarget.value,
+        },
+        "#desassign-dish",
+        event
+      );
+    });
+  }
+
+  bindDesassignDish(handler) {
+    const dishList = document.getElementById("desdish-list");
+    const buttons = dishList.querySelectorAll("a.btn");
+    for (const button of buttons) {
+      console.log(button);
+      button.addEventListener("click", function (event) {
+        handler(this.dataset.name, this.dataset.menu);
+        event.preventDefault();
+      });
+    }
   }
 }
 export default ManagerView;

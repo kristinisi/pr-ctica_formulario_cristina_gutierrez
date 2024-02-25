@@ -32,6 +32,10 @@ const historyActions = {
   newRestaurant: () => ManagerApp.handleNewRestaurantForm(),
   assignDish: () => ManagerApp.handleAssignDishForm(),
   desassignDish: () => ManagerApp.handleDesassignDishForm(),
+  desassignDishByMenu: (event) => {
+    ManagerApp.handleDesassignDishForm();
+    ManagerApp.handleDesassignDishListByMenu(event.state.category);
+  },
 };
 
 history.replaceState({ action: "init" }, null);
