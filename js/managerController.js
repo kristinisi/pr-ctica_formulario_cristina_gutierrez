@@ -292,7 +292,9 @@ class ManagerController {
       this.handleRemoveCategoryForm,
       this.handleNewDishForm,
       this.handleRemoveDishForm,
-      this.handleNewRestaurantForm
+      this.handleNewRestaurantForm,
+      this.handleAssignDishForm,
+      this.handleDesassignDishForm
     );
   };
 
@@ -464,8 +466,6 @@ class ManagerController {
       done = false;
       error = exception;
     }
-    console.log(done);
-    console.log(error);
 
     this[VIEW].showNewDishModal(done, dish, error);
   };
@@ -500,7 +500,6 @@ class ManagerController {
     let dish;
     try {
       dish = this[MODEL].createDish(name);
-      console.log(dish);
       this[MODEL].removeDish(dish);
       done = true;
     } catch (exception) {
@@ -532,6 +531,42 @@ class ManagerController {
       error = exception;
     }
     this[VIEW].showNewRestaurantModal(done, res, error);
+  };
+
+  handleAssignDishForm = () => {
+    this[VIEW].showAssignDishForm(this[MODEL].dishes, this[MODEL].menus);
+    this[VIEW].bindAssignDishForm(this.handleAssignDish);
+  };
+
+  handleAssignDish = (menu, dishes) => {
+    let done;
+    let error;
+    let menu_obj;
+    let dish_obj;
+
+    try {
+      menu_obj = this[MODEL].createMenu(menu);
+      for (const dish of dishes) {
+        dish_obj = this[MODEL].createDish(dish);
+        this[MODEL].assignDishToMenu(menu_obj, dish_obj);
+      }
+      done = true;
+    } catch (exception) {
+      done = false;
+      error = exception;
+    }
+    this[VIEW].showAssignDishModal(done, menu_obj, error);
+  };
+
+  handleDesassignDishForm = () => {
+    this[VIEW].showDesassignDishForm(this[MODEL].menus);
+    console.log(this[MODEL].menus);
+
+    // this[VIEW].bindRemoveDishSelects(
+    //   //se enlazan los dos handlers
+    //   this.handleRemoveDishListByCategory,
+    //   this.handleRemoveDishListByAllergens
+    // );
   };
 }
 export default ManagerController;

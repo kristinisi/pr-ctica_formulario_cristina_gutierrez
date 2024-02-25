@@ -2,6 +2,7 @@ import {
   newCategoryValidation,
   newDishValidation,
   newRestaurantValidation,
+  AssignDishValidation,
 } from "../js/validation.js";
 
 const EXCECUTE_HANDLER = Symbol("excecuteHandler");
@@ -48,7 +49,6 @@ class ManagerView {
             </a>
           </div>`
       );
-      console.log(category.category.image);
     }
 
     this.categories.appendChild(container);
@@ -295,7 +295,6 @@ class ManagerView {
 
   showDishInNewWindow(dish, newWindow) {
     const main = newWindow.document.querySelector("main");
-    console.log(main);
     main.replaceChildren();
     let container;
     if (dish) {
@@ -366,6 +365,14 @@ class ManagerView {
       "beforeend",
       '<li><a id="lnewRestaurant" class="dropdown-item" href="#new-restaurant">Crear restaurante</a></li>'
     );
+    suboptions.insertAdjacentHTML(
+      "beforeend",
+      '<li><a id="lAssignDish" class="dropdown-item" href="#assign-dish">Asignar plato a menú</a></li>'
+    );
+    suboptions.insertAdjacentHTML(
+      "beforeend",
+      '<li><a id="lDesassignDish" class="dropdown-item" href="#desassign-dish">Desasignar plato a menú</a></li>'
+    );
 
     menuOption.append(suboptions);
     this.menu.append(menuOption);
@@ -374,8 +381,6 @@ class ManagerView {
   showNewCategoryForm() {
     this.categories.replaceChildren();
     this.main.replaceChildren();
-    // if (this.categories.children.length > 1)
-    //   this.categories.children[1].remove();
     const container = document.createElement("div");
     container.classList.add("container");
     container.classList.add("my-3");
@@ -605,11 +610,7 @@ class ManagerView {
 
     const np_Allergens = document.getElementById("np-Allergens");
     const npAllergens = form.querySelector("#npAllergens");
-    console.log(np_Allergens);
-    console.log(allergens);
     for (const allerge of allergens) {
-      console.log(allerge);
-      console.log(allerge.allerge.name);
       npAllergens.insertAdjacentHTML(
         "beforeend",
         `<option value="${allerge.allerge.name}">${allerge.allerge.name}</option>`
@@ -629,8 +630,6 @@ class ManagerView {
   }
 
   showNewDishModal(done, dish, error) {
-    console.log(dish);
-    console.log("---------------------");
     const messageModalContainer = document.getElementById("messageModal");
     const messageModal = new bootstrap.Modal("#messageModal");
 
@@ -716,8 +715,6 @@ class ManagerView {
     );
     const np_Allergens = document.getElementById("np-Allergens");
     const rpAllergens = form.querySelector("#rpAllergens");
-    console.log(np_Allergens);
-    console.log(allergens);
     for (const allerge of allergens) {
       rpAllergens.insertAdjacentHTML(
         "beforeend",
@@ -852,9 +849,6 @@ class ManagerView {
   }
 
   showNewRestaurantModal(done, res, error) {
-    console.log(error);
-    console.log(res);
-    console.log("...........................");
     const messageModalContainer = document.getElementById("messageModal");
     const messageModal = new bootstrap.Modal("#messageModal");
     const title = document.getElementById("messageModalTitle");
@@ -882,6 +876,165 @@ class ManagerView {
     messageModalContainer.addEventListener("hidden.bs.modal", listener, {
       once: true,
     });
+  }
+
+  showAssignDishForm(dishes, menus) {
+    this.main.replaceChildren();
+    this.categories.replaceChildren();
+    const container = document.createElement("div");
+    container.classList.add("container");
+    container.classList.add("my-3");
+    container.id = "assign-dish";
+
+    container.insertAdjacentHTML(
+      "afterbegin",
+      '<h1 class="display-5">Asignar platos a menú</h1>'
+    );
+
+    const form = document.createElement("form");
+    form.name = "fAssignDish";
+    form.setAttribute("role", "form");
+    form.setAttribute("novalidate", "");
+    form.classList.add("row");
+    form.classList.add("g-3");
+
+    form.insertAdjacentHTML(
+      "beforeend",
+      `<div class="col-md-12 mb-3">
+				<label class="form-label" for="npMenu">Menús *</label>
+				<div class="input-group">
+					<label class="input-group-text" for="npMenu"><i class="bi bi-card-checklist"></i></label>
+					<select class="form-select" name="npMenu" id="npMenu" required>
+             <option disabled selected>Selecciona un menú</option>
+					</select>
+					<div class="invalid-feedback">Los platos deben pertenecer a un menú.</div>
+					<div class="valid-feedback">Correcto.</div>
+				</div>
+			</div>`
+    );
+
+    const npMenus = form.querySelector("#npMenu");
+    for (const menu of menus) {
+      npMenus.insertAdjacentHTML(
+        "beforeend",
+        `<option value="${menu.menu.name}">${menu.menu.name}</option>`
+      );
+    }
+
+    form.insertAdjacentHTML(
+      "beforeend",
+      `<div class="col-md-12 mb-3">
+				<label class="form-label" for="naDishes">Platos *</label>
+				<div class="input-group">
+					<label class="input-group-text" for="naDishes"><i class="bi bi-card-checklist"></i></label>
+					<select class="form-select" name="naDishes" id="naDishes" multiple required>
+					</select>
+					<div class="invalid-feedback">Debe seleccionar al menos un plato</div>
+					<div class="valid-feedback">Correcto.</div>
+				</div>
+			</div>`
+    );
+
+    const naDishes = form.querySelector("#naDishes");
+    for (const dish of dishes) {
+      naDishes.insertAdjacentHTML(
+        "beforeend",
+        `<option value="${dish.name}">${dish.name}</option>`
+      );
+    }
+
+    form.insertAdjacentHTML(
+      "beforeend",
+      `<div class="mb-12">
+				<button class="btn btn-primary" type="submit">Enviar</button>
+				<button class="btn btn-primary" type="reset">Cancelar</button>
+			</div>`
+    );
+
+    container.append(form);
+    this.main.append(container);
+  }
+
+  showAssignDishModal(done, menu, error) {
+    const messageModalContainer = document.getElementById("messageModal");
+    const messageModal = new bootstrap.Modal("#messageModal");
+
+    const title = document.getElementById("messageModalTitle");
+    title.innerHTML = "Asignación de platos";
+    const body = messageModalContainer.querySelector(".modal-body");
+    body.replaceChildren();
+    if (done) {
+      body.insertAdjacentHTML(
+        "afterbegin",
+        `<div class="p-3">Los platos se han asignado correctamente al menú <strong>${menu.name}</strong></div>`
+      );
+    } else {
+      body.insertAdjacentHTML(
+        "afterbegin",
+        `<div class="error text-danger p-3"><i class="bi bi-exclamation-triangle"></i> No se han podido asignar los platos al menú <strong>${menu.name}</strong>.</div>`
+      );
+    }
+    messageModal.show();
+    const listener = (event) => {
+      if (done) {
+        document.fAssignDish.reset();
+      }
+      document.fAssignDish.npMenu.focus();
+    };
+    messageModalContainer.addEventListener("hidden.bs.modal", listener, {
+      once: true,
+    });
+  }
+
+  showDesassignDishForm(menus) {
+    console.log("estoy aqui");
+    this.main.replaceChildren();
+    this.categories.replaceChildren();
+
+    const container = document.createElement("div");
+    container.classList.add("container");
+    container.classList.add("my-3");
+    container.id = "desassign-dish";
+
+    container.insertAdjacentHTML(
+      "afterbegin",
+      '<h1 class="display-5">Desasignar un plato de un menú</h1>'
+    );
+
+    const form = document.createElement("form");
+    form.name = "fDesDish";
+    form.setAttribute("role", "form");
+    form.setAttribute("novalidate", "");
+    form.classList.add("row");
+    form.classList.add("g-3");
+
+    form.insertAdjacentHTML(
+      "beforeend",
+      `<div class="col-md-12 mb-3">
+				<label class="form-label" for="ndMenu">Menús</label>
+				<div class="input-group">
+					<label class="input-group-text" for="ndMenu"><i class="bi bi-card-checklist"></i></label>
+					<select class="form-select" name="ndMenu" id="ndMenu">
+						<option disabled selected>Selecciona un menú</option>
+					</select>
+				</div>
+			</div>`
+    );
+    const ndMenu = form.querySelector("#ndMenu");
+    for (const menu of menus) {
+      ndMenu.insertAdjacentHTML(
+        "beforeend",
+        `<option value="${menu.menu.name}">${menu.menu.name}</option>`
+      );
+    }
+
+    container.append(form);
+    container.insertAdjacentHTML(
+      "beforeend",
+      '<div id="dish-list" class="container my-3"><div class="row"></div></div>'
+    );
+
+    this.main.append(container);
   }
 
   //Creacion de binds
@@ -919,9 +1072,7 @@ class ManagerView {
 
   bindDishesCategoryListInMenu(handler) {
     const navCats = document.getElementById("navCats");
-    console.log(navCats);
     const links = navCats.nextElementSibling.querySelectorAll("a");
-    console.log(links);
     for (const link of links) {
       link.addEventListener("click", (event) => {
         const { category } = event.currentTarget.dataset;
@@ -994,9 +1145,7 @@ class ManagerView {
 
   bindRestaurantListInMenu(handler) {
     const navRest = document.getElementById("navRest");
-    console.log(navRest);
     const links = navRest.nextElementSibling.querySelectorAll("a");
-    console.log(links);
     for (const link of links) {
       link.addEventListener("click", (event) => {
         handler(event.currentTarget.dataset.restaurant);
@@ -1030,7 +1179,6 @@ class ManagerView {
       if (newWindow) {
         this.dishWindow.set(windowName, newWindow); // Agregar la ventana al mapa
         this.cont++;
-        console.log(this.dishWindow);
       }
 
       // Agregar un listener para el evento DOMContentLoaded
@@ -1053,7 +1201,9 @@ class ManagerView {
     hRemoveCategory,
     hNewDishForm,
     hRemoveDish,
-    hNewRestaurant
+    hNewRestaurant,
+    hAssignDishForm,
+    hDesassignDishForm
   ) {
     const newCategoryLink = document.getElementById("lnewCategory");
     newCategoryLink.addEventListener("click", (event) => {
@@ -1106,6 +1256,28 @@ class ManagerView {
         [],
         "#new-restaurant",
         { action: "newRestaurant" },
+        "#",
+        event
+      );
+    });
+    const assignDishLink = document.getElementById("lAssignDish");
+    assignDishLink.addEventListener("click", (event) => {
+      this[EXCECUTE_HANDLER](
+        hAssignDishForm,
+        [],
+        "#assign-dish",
+        { action: "assignDish" },
+        "#",
+        event
+      );
+    });
+    const desassignDishLink = document.getElementById("lDesassignDish");
+    desassignDishLink.addEventListener("click", (event) => {
+      this[EXCECUTE_HANDLER](
+        hDesassignDishForm,
+        [],
+        "#desassign-dish",
+        { action: "desassignDish" },
         "#",
         event
       );
@@ -1175,6 +1347,10 @@ class ManagerView {
 
   bindNewRestaurantForm(handler) {
     newRestaurantValidation(handler);
+  }
+
+  bindAssignDishForm(handler) {
+    AssignDishValidation(handler);
   }
 }
 export default ManagerView;

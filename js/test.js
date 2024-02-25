@@ -30,6 +30,8 @@ const historyActions = {
     ManagerApp.handleRemoveDishListByAllergens(event.state.allergen);
   },
   newRestaurant: () => ManagerApp.handleNewRestaurantForm(),
+  assignDish: () => ManagerApp.handleAssignDishForm(),
+  desassignDish: () => ManagerApp.handleDesassignDishForm(),
 };
 
 history.replaceState({ action: "init" }, null);

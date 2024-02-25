@@ -244,4 +244,62 @@ function newRestaurantValidation(handler) {
   form.nrDescription.addEventListener("change", defaultCheckElement);
 }
 
-export { newCategoryValidation, newDishValidation, newRestaurantValidation };
+function AssignDishValidation(handler) {
+  const form = document.forms.fAssignDish;
+  form.setAttribute("novalidate", "");
+
+  form.addEventListener("submit", function (event) {
+    let isValid = true;
+    let firstInvalidElement = null;
+
+    if (!this.npMenu.checkValidity()) {
+      isValid = false;
+      showFeedBack(this.npMenu, false);
+      firstInvalidElement = this.npMenu;
+    } else {
+      showFeedBack(this.npMenu, true);
+    }
+
+    if (!this.naDishes.checkValidity()) {
+      isValid = false;
+      showFeedBack(this.naDishes, false);
+      firstInvalidElement = this.naDishes;
+    } else {
+      showFeedBack(this.naDishes, true);
+    }
+
+    if (!isValid) {
+      firstInvalidElement.focus();
+    } else {
+      const dishes = [...this.naDishes.selectedOptions].map(
+        (option) => option.value
+      );
+
+      handler(this.npMenu.value, dishes);
+    }
+
+    event.preventDefault();
+    event.stopPropagation();
+  });
+
+  form.addEventListener("reset", function (event) {
+    for (const div of this.querySelectorAll(
+      "div.valid-feedback, div.invalid-feedback"
+    )) {
+      div.classList.remove("d-block");
+      div.classList.add("d-none");
+    }
+    for (const input of this.querySelectorAll("input")) {
+      input.classList.remove("is-valid");
+      input.classList.remove("is-invalid");
+    }
+    this.npMenu.focus();
+  });
+}
+
+export {
+  newCategoryValidation,
+  newDishValidation,
+  newRestaurantValidation,
+  AssignDishValidation,
+};
