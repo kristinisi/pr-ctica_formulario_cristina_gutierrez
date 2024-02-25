@@ -603,11 +603,32 @@ class ManagerController {
 
   handleChangeDishListByMenu = (menu) => {
     const menu_obj = this[MODEL].createMenu(menu);
-    this[VIEW].showChangeDishList(
-      this[MODEL].getDishesWithMenu(menu_obj),
-      menu_obj
-    );
-    // this[VIEW].bindChangeDish(this.handleChangeDish);
+    this[VIEW].showChangeDishList(this[MODEL].getDishesWithMenu(menu_obj));
+    this[VIEW].bindChangeDishForm(this.handleChangeDish);
+  };
+
+  handleChangeDish = (menu, dish1, dish2) => {
+    let done;
+    let error;
+    let menu_obj;
+    let dish1_obj;
+    let dish2_obj;
+
+    console.log(menu);
+    console.log(dish1);
+    console.log(dish2);
+
+    try {
+      menu_obj = this[MODEL].createMenu(menu);
+      dish1_obj = this[MODEL].createDish(dish1);
+      dish2_obj = this[MODEL].createDish(dish2);
+      this[MODEL].changeDishesPositionsInMenu(menu_obj, dish1_obj, dish2_obj);
+      done = true;
+    } catch (exception) {
+      done = false;
+      error = exception;
+    }
+    this[VIEW].showChangeDishModal(done, menu_obj, error);
   };
 }
 export default ManagerController;

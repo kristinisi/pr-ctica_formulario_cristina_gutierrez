@@ -3,6 +3,7 @@ import {
   newDishValidation,
   newRestaurantValidation,
   AssignDishValidation,
+  ChangeDishValidation,
 } from "../js/validation.js";
 
 const EXCECUTE_HANDLER = Symbol("excecuteHandler");
@@ -1163,7 +1164,7 @@ class ManagerView {
     this.main.append(container);
   }
 
-  showChangeDishList(dishes, menu) {
+  showChangeDishList(dishes) {
     const listContainer = document
       .getElementById("chdish-list")
       .querySelector("div.row");
@@ -1207,33 +1208,52 @@ class ManagerView {
       );
     }
 
-    //   form.insertAdjacentHTML(
-    //     "beforeend",
-    //     `<div class="col-md-6 mb-3">
-    // 	<label class="form-label" for="chPlato2">Segundo plato</label>
-    // 	<div class="input-group">
-    // 		<label class="input-group-text" for="chPlato2"><i class="bi bi-card-checklist"></i></label>
-    // 		<select class="form-select" name="chPlato2" id="chPlato2">
-    // 			<option disabled selected>Selecciona el segundo plato</option>
-    // 		</select>
-    // 	</div>
-    // </div>`
-    //   );
-
-    // const chPlato2 = form.querySelector("#chPlato2");
-    // console.log(chPlato2);
-    // for (const dish of dishes) {
-    //   chPlato2.insertAdjacentHTML(
-    //     "beforeend",
-    //     `<option value="${dish.name}">${dish.name}</option>`
-    //   );
-    // }
     if (!exist) {
       listContainer.insertAdjacentHTML(
         "beforeend",
         '<p class="text-danger"><i class="bi bi-exclamation-triangle"></i> No existen platos para este menu</p>'
       );
     }
+
+    form.insertAdjacentHTML(
+      "beforeend",
+      `<div class="mb-12">
+				<button class="btn btn-primary" type="submit">Enviar</button>
+				<button class="btn btn-primary" type="reset">Cancelar</button>
+			</div>`
+    );
+  }
+
+  showChangeDishModal(done, menu, error) {
+    console.log("estoy aqui ------------");
+    const messageModalContainer = document.getElementById("messageModal");
+    const messageModal = new bootstrap.Modal("#messageModal");
+
+    const title = document.getElementById("messageModalTitle");
+    title.innerHTML = "Cambiar orden de platos";
+    const body = messageModalContainer.querySelector(".modal-body");
+    body.replaceChildren();
+    if (done) {
+      body.insertAdjacentHTML(
+        "afterbegin",
+        `<div class="p-3">Los platos se han cambiado correctamente en el menú <strong>${menu.name}</strong></div>`
+      );
+    } else {
+      body.insertAdjacentHTML(
+        "afterbegin",
+        `<div class="error text-danger p-3"><i class="bi bi-exclamation-triangle"></i> No se han podido cambiar los platos en el menú <strong>${menu.name}</strong>.</div>`
+      );
+    }
+    messageModal.show();
+    const listener = (event) => {
+      if (done) {
+        document.fChanDish.reset();
+      }
+      document.fChanDish.chMenu.focus();
+    };
+    messageModalContainer.addEventListener("hidden.bs.modal", listener, {
+      once: true,
+    });
   }
 
   //Creacion de binds
@@ -1608,6 +1628,10 @@ class ManagerView {
         event
       );
     });
+  }
+
+  bindChangeDishForm(handler) {
+    ChangeDishValidation(handler);
   }
 }
 export default ManagerView;

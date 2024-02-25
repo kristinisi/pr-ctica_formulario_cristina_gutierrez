@@ -296,10 +296,70 @@ function AssignDishValidation(handler) {
     this.npMenu.focus();
   });
 }
+function ChangeDishValidation(handler) {
+  console.log("hola");
+  const form = document.forms.fChanDish;
+  console.log(form);
+  form.setAttribute("novalidate", "");
+
+  form.addEventListener("submit", function (event) {
+    let isValid = true;
+    let firstInvalidElement = null;
+
+    // console.log(this.chMenu);
+    // if (!this.chMenu.checkValidity()) {
+    //   isValid = false;
+    //   showFeedBack(this.chMenu, false);
+    //   firstInvalidElement = this.chMenu;
+    // } else {
+    //   showFeedBack(this.chMenu, true);
+    // }
+
+    // if (!this.chPlato1.checkValidity()) {
+    //   isValid = false;
+    //   showFeedBack(this.chPlato1, false);
+    //   firstInvalidElement = this.chPlato1;
+    // } else {
+    //   showFeedBack(this.chPlato1, true);
+    // }
+
+    // if (!this.chPlato2.checkValidity()) {
+    //   isValid = false;
+    //   showFeedBack(this.chPlato2, false);
+    //   firstInvalidElement = this.chPlato2;
+    // } else {
+    //   showFeedBack(this.chPlato2, true);
+    // }
+
+    if (!isValid) {
+      firstInvalidElement.focus();
+    } else {
+      handler(this.chMenu.value, this.chPlato1.value, this.chPlato2.value);
+    }
+
+    event.preventDefault();
+    event.stopPropagation();
+  });
+
+  form.addEventListener("reset", function (event) {
+    for (const div of this.querySelectorAll(
+      "div.valid-feedback, div.invalid-feedback"
+    )) {
+      div.classList.remove("d-block");
+      div.classList.add("d-none");
+    }
+    for (const input of this.querySelectorAll("input")) {
+      input.classList.remove("is-valid");
+      input.classList.remove("is-invalid");
+    }
+    this.chMenu.focus();
+  });
+}
 
 export {
   newCategoryValidation,
   newDishValidation,
   newRestaurantValidation,
   AssignDishValidation,
+  ChangeDishValidation,
 };
