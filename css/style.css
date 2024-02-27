@@ -371,3 +371,7 @@ main {
 .text-rest {
   text-align: center;
 }
+
+#chdish-list div {
+  padding: 0px;
+}

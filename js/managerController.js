@@ -147,7 +147,7 @@ class ManagerController {
       "Queso",
       "Verduras varias",
       "Harina",
-      " Huevo",
+      "Huevo",
       "Sal",
       "Pimienta",
     ];
@@ -203,7 +203,7 @@ class ManagerController {
     plato10.image = "./img/plato04.png";
 
     const plato11 = this[MODEL].createDish(
-      " Merluza con Salsa de Nata, Tomate y Espinacas"
+      "Merluza con Salsa de Nata, Tomate y Espinacas"
     );
     plato11.description =
       "Una combinación cremosa y deliciosa que realza la suavidad de la merluza con el frescor de las espinacas y el toque de tomate.";

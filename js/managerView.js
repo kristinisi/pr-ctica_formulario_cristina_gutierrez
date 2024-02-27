@@ -342,7 +342,7 @@ class ManagerView {
     menuOption.classList.add("dropdown");
     menuOption.insertAdjacentHTML(
       "afterbegin",
-      '<a class="nav-link dropdown-toggle" href="#" id="navServices" role="button" data-bs-toggle="dropdown" aria-expanded="false"> Adminitración</a>'
+      '<a class="nav-link dropdown-toggle" href="#" id="navServices" role="button" data-bs-toggle="dropdown" aria-expanded="false"> Otras opciones</a>'
     );
     const suboptions = document.createElement("ul");
     suboptions.classList.add("dropdown-menu");
@@ -1145,7 +1145,9 @@ class ManagerView {
 						<option disabled selected>Selecciona un menú</option>
 					</select>
 				</div>
-			</div>`
+			</div>
+      <div id="chdish-list" class="container my-3"><div class="row"></div></div>
+      `
     );
     const chMenu = form.querySelector("#chMenu");
     for (const menu of menus) {
@@ -1156,10 +1158,10 @@ class ManagerView {
     }
 
     container.append(form);
-    container.insertAdjacentHTML(
-      "beforeend",
-      '<div id="chdish-list" class="container my-3"><div class="row"></div></div>'
-    );
+    // container.insertAdjacentHTML(
+    //   "beforeend",
+
+    // );
 
     this.main.append(container);
   }
@@ -1171,14 +1173,20 @@ class ManagerView {
     3;
     listContainer.replaceChildren();
     const form = document.getElementById("fChanDish");
+
+    // if (listContainer.children.length > 2) {
+    //   listContainer.children[1].remove();
+    //   listContainer.children[2].remove();
+    // }
+
     let exist = false;
 
-    form.insertAdjacentHTML(
+    listContainer.insertAdjacentHTML(
       "beforeend",
       `<div class="col-md-6 mb-3">
 		<label class="form-label" for="chPlato1">Primer plato</label>
 		<div class="input-group">
-			<label class="input-group-text" for="chPlato1"><i class="bi bi-card-checklist"></i></label>
+			<label id='dish1' class="input-group-text" for="chPlato1"><i class="bi bi-card-checklist"></i></label>
 			<select class="form-select" name="chPlato1" id="chPlato1">
 				<option disabled selected>Selecciona el primer plato</option>
 			</select>
@@ -1187,15 +1195,15 @@ class ManagerView {
   <div class="col-md-6 mb-3">
 		<label class="form-label" for="chPlato2">Segundo plato</label>
 		<div class="input-group">
-			<label class="input-group-text" for="chPlato2"><i class="bi bi-card-checklist"></i></label>
+			<label id='dish2' class="input-group-text" for="chPlato2"><i class="bi bi-card-checklist"></i></label>
 			<select class="form-select" name="chPlato2" id="chPlato2">
 				<option disabled selected>Selecciona el segundo plato</option>
 			</select>
 		</div>
 	</div>`
     );
-    const chPlato1 = form.querySelector("#chPlato1");
-    const chPlato2 = form.querySelector("#chPlato2");
+    const chPlato1 = listContainer.querySelector("#chPlato1");
+    const chPlato2 = listContainer.querySelector("#chPlato2");
     for (const dish of dishes) {
       exist = true;
       chPlato1.insertAdjacentHTML(
@@ -1215,7 +1223,7 @@ class ManagerView {
       );
     }
 
-    form.insertAdjacentHTML(
+    listContainer.insertAdjacentHTML(
       "beforeend",
       `<div class="mb-12">
 				<button class="btn btn-primary" type="submit">Enviar</button>
