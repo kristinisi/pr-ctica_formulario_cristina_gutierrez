@@ -25,6 +25,7 @@ function defaultCheckElement(event) {
 }
 
 function isValidImage(input) {
+  //LAS IMÁGENES TIENEN QUE ESTAR DENTRO DE LA CARPETA IMG DEL PROYECTO
   const file = input.files[0];
   if (!file) return false;
 
@@ -40,13 +41,13 @@ function newCategoryValidation(handler) {
     let firstInvalidElement = null;
     this.ncDescription.value = this.ncDescription.value.trim();
 
-    if (!this.ncImg.checkValidity() || !isValidImage(this.ncImg)) {
-      isValid = false;
-      showFeedBack(this.ncImg, false);
-      firstInvalidElement = this.ncImg;
-    } else {
-      showFeedBack(this.ncImg, true);
-    }
+    // if (!this.ncImg.checkValidity() || !isValidImage(this.ncImg)) {
+    //   isValid = false;
+    //   showFeedBack(this.ncImg, false);
+    //   firstInvalidElement = this.ncImg;
+    // } else {
+    //   showFeedBack(this.ncImg, true);
+    // }
     if (!this.ncName.checkValidity()) {
       isValid = false;
       showFeedBack(this.ncName, false);
@@ -113,13 +114,13 @@ function newDishValidation(handler) {
       showFeedBack(this.npIngredients, true);
     }
 
-    if (!this.npImg.checkValidity() || !isValidImage(this.npImg)) {
-      isValid = false;
-      showFeedBack(this.npImg, false);
-      firstInvalidElement = this.npImg;
-    } else {
-      showFeedBack(this.npImg, true);
-    }
+    // if (!this.npImg.checkValidity() || !isValidImage(this.npImg)) {
+    //   isValid = false;
+    //   showFeedBack(this.npImg, false);
+    //   firstInvalidElement = this.npImg;
+    // } else {
+    //   showFeedBack(this.npImg, true);
+    // }
 
     if (!this.npDescription.checkValidity()) {
       isValid = false;
@@ -197,13 +198,13 @@ function newRestaurantValidation(handler) {
     let firstInvalidElement = null;
     this.nrDescription.value = this.nrDescription.value.trim();
 
-    if (!this.nrImg.checkValidity() || !isValidImage(this.nrImg)) {
-      isValid = false;
-      showFeedBack(this.nrImg, false);
-      firstInvalidElement = this.nrImg;
-    } else {
-      showFeedBack(this.nrImg, true);
-    }
+    // if (!this.nrImg.checkValidity() || !isValidImage(this.nrImg)) {
+    //   isValid = false;
+    //   showFeedBack(this.nrImg, false);
+    //   firstInvalidElement = this.nrImg;
+    // } else {
+    //   showFeedBack(this.nrImg, true);
+    // }
     if (!this.nrName.checkValidity()) {
       isValid = false;
       showFeedBack(this.nrName, false);
@@ -336,7 +337,6 @@ function ChangeDishValidation(handler) {
     } else {
       handler(this.chMenu.value, this.chPlato1.value, this.chPlato2.value);
     }
-
     event.preventDefault();
     event.stopPropagation();
   });

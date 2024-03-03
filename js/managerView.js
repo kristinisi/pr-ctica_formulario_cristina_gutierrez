@@ -1174,11 +1174,6 @@ class ManagerView {
     listContainer.replaceChildren();
     const form = document.getElementById("fChanDish");
 
-    // if (listContainer.children.length > 2) {
-    //   listContainer.children[1].remove();
-    //   listContainer.children[2].remove();
-    // }
-
     let exist = false;
 
     listContainer.insertAdjacentHTML(
@@ -1223,7 +1218,7 @@ class ManagerView {
       );
     }
 
-    listContainer.insertAdjacentHTML(
+    form.insertAdjacentHTML(
       "beforeend",
       `<div class="mb-12">
 				<button class="btn btn-primary" type="submit">Enviar</button>
